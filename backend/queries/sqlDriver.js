@@ -1,4 +1,4 @@
-const db = require('./db');
+const db = require('../db');
 const fs = require('fs');
 const path = require('path');
 
@@ -18,7 +18,7 @@ async function runSqlFile(sqlfile) {
 
   } catch (err) {
 
-    return { file: sqlfile, status: 'error', data: response.rows };;
+    return { file: sqlfile, status: 'error', data: err };;
   } 
 }
 
@@ -32,5 +32,7 @@ async function sqlFileDriver(fileList){
 
     return resultList;
 }
+
+sqlFileDriver('create_tables.sql');
 
 module.exports = sqlFileDriver
