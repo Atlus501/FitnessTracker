@@ -1,4 +1,4 @@
-const db = require('../db');
+const db = require('./db');
 const fs = require('fs');
 const path = require('path');
 
@@ -33,6 +33,12 @@ async function sqlFileDriver(fileList){
     return resultList;
 }
 
-sqlFileDriver('create_tables.sql');
+//example of how to use this code "
+/*
+sqlFileDriver(['create_tables.sql']).then((results) => {
+    console.log("--- SQL Execution Results ---");
+    console.log(results);
+    process.exit(); // Exit only after the work is done
+});*/
 
 module.exports = sqlFileDriver
