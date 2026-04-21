@@ -1,5 +1,7 @@
 const db = require('./db');
 
+//created by using npm install pg dotenv
+
 async function testConnection() {
   try {
     // A simple query to get the current time from Postgres
