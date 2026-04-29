@@ -1,0 +1,5 @@
+pg
+dotenv
+express
+cors
+nodemon

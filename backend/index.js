@@ -1,15 +1,15 @@
-const db = require('./db');
+const express = require("express")
+const app = express();
 
-//created by using npm install pg dotenv
+const sqlFileDriver = require('./sqlDriver.js');
 
-async function testConnection() {
+//initialily create the tables once the app in initialized
+app.listen(3001, async () => {
   try {
-    // A simple query to get the current time from Postgres
-    const res = await db.query('SELECT NOW()');
-    console.log('Successfully connected! Server time:', res.rows[0].now);
-  } catch (err) {
-    console.error('Connection error:', err.stack);
-  }
-}
-
-testConnection();
+        console.log("Initializing database...");
+        const results = await sqlFileDriver(["create_tables.sql"]);
+        console.log("DB Init Results:", results);
+    } catch (err) {
+        console.error("Failed to initialize database:", err);
+    }
+});
