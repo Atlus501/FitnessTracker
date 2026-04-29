@@ -1,23 +1,20 @@
 -- Creating tables(relations) based on the Schema from Phase1
 
 -- User table to keep track of users in the system
-CREATE TABLE IF NOT EXISTS "User" (
+CREATE TABLE IF NOT EXISTS Users (
     id SERIAL PRIMARY KEY, -- serial helps to auto-increment the id when not specified
 	name VARCHAR(255) NOT NULL, -- name of user
     password VARCHAR(255) NOT NULL, -- password can't be null
     is_male BOOLEAN NOT NULL, -- gender can't be null
     age SMALLINT NOT NULL CHECK (age >= 0), -- ensuring that age is a +ve int
-    weight SMALLINT NOT NULL CHECK (weight >= 0) -- same for weight
+    weight SMALLINT NOT NULL CHECK (weight >= 0), -- same for weight
+    height SMALLINT NOT NULL CHECK (weight >= 0)
 );
 
 -- Goals table: collection of possible nutritional and caloric goals
 CREATE TABLE IF NOT EXISTS Goals (
     id SERIAL PRIMARY KEY, -- using serial again
-    type VARCHAR(255) NOT NULL, -- type of goal (bulk/cut/cardio etc.)
-    base_recommendation INT NOT NULL, -- number of goals recommended
-    age_modifier INT NOT NULL, -- modifications in base_recom. based on age
-    sex_modifier INT NOT NULL, -- based on sex
-    weight_modifier INT NOT NULL -- based on weight
+    type VARCHAR(255) UNIQUE NOT NULL -- type of goal (bulk/cut/cardio etc.)
 );
 
 --create the parent Activities table
@@ -50,6 +47,7 @@ create table IF NOT EXISTS HasManyGoals (
     composite_key SERIAL PRIMARY KEY,
     user_id INT NOT NULL,
     goal_id INT NOT NULL,
+    recommend_value INT,
     FOREIGN KEY (user_id) REFERENCES "User"(id) ON DELETE CASCADE,
     FOREIGN KEY (goal_id) REFERENCES Goals(id) ON DELETE CASCADE
 );

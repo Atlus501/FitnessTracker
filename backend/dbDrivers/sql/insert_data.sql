@@ -1,0 +1,1 @@
+INSERT INTO Goals (type) VALUES ('calorie'), ('protein'), ('fiber')
