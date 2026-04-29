@@ -1,7 +1,15 @@
 const express = require("express")
 const app = express();
+const cors = require("cors");
 
 const sqlFileDriver = require('./dbDrivers/sqlDriver.js');
+const goalRouter = require('./routes/Goals.js');
+
+app.use(express.json());
+app.use(cors());
+
+app.use("/goals", goalRouter);
+
 
 //initialily create the tables once the app in initialized
 app.listen(3001, async () => {
