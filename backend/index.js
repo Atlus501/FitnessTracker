@@ -1,7 +1,7 @@
 const express = require("express")
 const app = express();
 
-const sqlFileDriver = require('./sqlDriver.js');
+const sqlFileDriver = require('./dbDrivers/sqlDriver.js');
 
 //initialily create the tables once the app in initialized
 app.listen(3001, async () => {
