@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS Goals (
 
 --create the parent Activities table
 create table IF NOT EXISTS Activities(
-	id SERIAL PRIMARY KEY,
+	name VARCHAR(30) PRIMARY KEY,
 	caloric_gain int NOT NULL,
 	amount SMALLINT CHECK (amount >= 0) NOT NULL,
 	units VARCHAR(20) NOT NULL
@@ -27,19 +27,17 @@ create table IF NOT EXISTS Activities(
 
 --creates Exercises child table
 create table IF NOT EXISTS Exercises(
-	id INT PRIMARY KEY,
-	type VARCHAR(20) NOT NULL,
-	weights SMALLINT CHECK (weights >= 0),
-	FOREIGN KEY(id) REFERENCES Activities(id) ON DELETE CASCADE
+	name varchar(30) PRIMARY KEY,
+	weight_modifier SMALLINT CHECK (weights >= 0),
+	FOREIGN KEY(name) REFERENCES Activities(name) ON DELETE CASCADE
 );
 
 --create Foods child table
 create table IF NOT EXISTS Foods(
-	id INT PRIMARY KEY,
-	name VARCHAR(30) NOT NULL,
+	name varchar(30) PRIMARY KEY,
 	protein SMALLINT CHECK(protein >= 0) NOT NULL,
 	fiber SMALLINT CHECK(fiber >= 0) NOT NULL,
-	FOREIGN KEY (id) REFERENCES Activities(id) ON DELETE CASCADE
+	FOREIGN KEY (name) REFERENCES Activities(name) ON DELETE CASCADE
 );
 
 -- create HasManyGoals child table
@@ -57,10 +55,10 @@ create table IF NOT EXISTS DoesDailyActivity (
     user_id INT NOT NULL,
     date DATE NOT NULL,
     amount_done SMALLINT CHECK (amount_done >= 0) NOT NULL,
-    activity_id INT NOT NULL,
+    activity varchar(30) NOT NULL,
     PRIMARY KEY (user_id, date, activity_id),
     FOREIGN KEY (user_id) REFERENCES "Users"(id) ON DELETE CASCADE,
-    FOREIGN KEY (activity_id) REFERENCES Activities(id)
+    FOREIGN KEY (activity) REFERENCES Activities(name)
 );
 
 -- create DailyProgressOfGoals child table
