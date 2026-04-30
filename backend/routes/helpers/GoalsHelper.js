@@ -62,8 +62,33 @@ const GoalsHelper = {
         }catch(err){
             return res.status(500).json({ error: err.message });
         }
-        
+    },
 
+    removeGoals : async (req, res) => {
+        const {user_id, goal_id} = req.query;
+
+        try{
+            const result = await db.query("DELETE FROM hasManyGoals WHERE user_id=$1 AND goal_id=$2", 
+            [ user_id, goal_id]);
+
+            return res.status(200).json({message : "goal updated"});
+        }catch(err){
+            return res.status(500).json({ error: err.message });
+        }
+    },
+
+    addGoals : async (req, res) => {
+        const {user_id, goal_id} = req.query;
+
+        try{
+            const result = await db.query(`INSERT INTO hasManyGoals (user_id, goal_id) VALUES 
+                ($1, $2)`, 
+            [user_id, goal_id]);
+
+            return res.status(200).json({message : "goal updated"});
+        }catch(err){
+            return res.status(500).json({ error: err.message });
+        }
     }
 }
 
