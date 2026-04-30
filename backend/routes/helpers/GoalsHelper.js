@@ -35,12 +35,12 @@ const GoalsHelper = {
         try {
             const result = await db.query(
                 `SELECT * FROM hasManyGoals h JOIN Users u ON h.user_id = u.id
-                JOIN Goals g ON h.goal_id = g.id WHERE u.id = $1 AND recommend_value`
+                JOIN Goals g ON h.goal_id = g.id WHERE u.id = $1`
 
                 ,[user_id]
             );
 
-            for (row of result.rows){
+            for (let row of result.rows){
                 if(!row.recommend_value)
                     row.recommend_value = await calRecommend(row);
             }
@@ -52,7 +52,7 @@ const GoalsHelper = {
     },
 
     setGoals : async (req, res) => {
-        const {user_id, goal_id, recommend_value} = req.query;
+        const {user_id, goal_id, recommend_value} = req.body;
 
         try{
             const result = await db.query("UPDATE hasManyGoals SET recommend_value=$1 WHERE user_id=$2 AND goal_id=$3", 
@@ -78,7 +78,7 @@ const GoalsHelper = {
     },
 
     addGoals : async (req, res) => {
-        const {user_id, goal_id} = req.query;
+        const {user_id, goal_id} = req.body;
 
         try{
             const result = await db.query(`INSERT INTO hasManyGoals (user_id, goal_id) VALUES 
