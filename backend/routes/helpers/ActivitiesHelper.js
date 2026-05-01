@@ -38,11 +38,16 @@ const ActivitiesHelper = {
         const {amount_done, activity, user_id} = req.body;
         const today = new Date();
 
-        const query = "INSERT INTO DoesDailyActivity (user_id, activity, amount_done, date) VALUES ($1, $2, $3, $4)";
+        const query = `INSERT INTO DoesDailyActivity (user_id, activity, amount_done, date)
+            VALUES ($1, $2, $3, $4)
+            ON CONFLICT (user_id, activity, date) 
+            DO UPDATE SET amount_done = EXCLUDED.amount_done;`;
 
         try{
-            const response = await db.query(query, [user_id, activity, amount_done, today.toISOString().split('T')[0]]);
-            return res.status(200).json({status: "successfully inserted daily activity"});
+
+            const response = await db.query(query, [user_id, activity, today.toISOString().split('T')[0]], amount_done);
+
+            return res.status(200).json({message: "successfully inserted daily activity"});
 
         }catch(err){
             return res.status(500).json({error : err.message});
@@ -72,22 +77,6 @@ const ActivitiesHelper = {
 
         try{
             const response = await db.query(query, [user_id, today.toISOString().split('T')[0]]);
-            return res.status(200).json({status: "successfully inserted daily activity"});
-
-        }catch(err){
-            return res.status(500).json({error : err.message});
-        }
-    },
-
-    updateDailyActivity : async (req, res) => {
-        const {activity, amount_done, user_id, activity_prev} = req.body;
-        const today = new Date();
-
-        const query = `UPDATE DoesDailyActivity SET activity = $1, amount_done = $2 
-            WHERE user_id = $3 AND DATE = $4 AND activity = $5`;
-
-        try{
-            const response = await db.query(query, [activity, amount_done, user_id, today.toISOString().split('T')[0], activity_prev]);
             return res.status(200).json({status: "successfully inserted daily activity"});
 
         }catch(err){

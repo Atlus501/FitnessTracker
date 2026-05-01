@@ -5,11 +5,8 @@ const sqlFileDriver = require('../dbDrivers/sqlDriver.js');
 
 const helper = require('./helpers/GoalsHelper.js');
 
-//sets goals for the user
-router.put("/set_goal", helper.setGoals);
-
-//adds goasl for the user 
-router.post("/add_goal", helper.addGoals);
+//adds or updates goals for the user 
+router.post("/record_goal", helper.recordGoals);
 
 //removes goals for the user
 router.delete("/remove_goal", helper.removeGoals);

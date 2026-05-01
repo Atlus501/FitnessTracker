@@ -18,9 +18,6 @@ router.post("/record", activities_helper.recordActivity);
 //removes user activity for the day
 router.delete("/remove", activities_helper.removeDailyActivity);
 
-//update user activity for the day
-router.put("/update", activities_helper.updateDailyActivity);
-
 //gets daily activity
 router.get("/:user_id", activities_helper.getDailyActivity);
 

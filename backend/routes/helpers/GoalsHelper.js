@@ -51,19 +51,6 @@ const GoalsHelper = {
         }
     },
 
-    setGoals : async (req, res) => {
-        const {user_id, goal_id, recommend_value} = req.body;
-
-        try{
-            const result = await db.query("UPDATE hasManyGoals SET recommend_value=$1 WHERE user_id=$2 AND goal_id=$3", 
-            [recommend_value, user_id, goal_id]);
-
-            return res.status(200).json({message : "goal updated"});
-        }catch(err){
-            return res.status(500).json({ error: err.message });
-        }
-    },
-
     removeGoals : async (req, res) => {
         const {user_id, goal_id} = req.query;
 
@@ -77,13 +64,19 @@ const GoalsHelper = {
         }
     },
 
-    addGoals : async (req, res) => {
+    recordGoals : async (req, res) => {
         const {user_id, goal_id} = req.body;
 
+        const recommend_value = await calRecommend(row);
+
+        const query = `INSERT INTO hasManyGoals (user_id, goal_id, recommend_value) VALUES 
+                ($1, $2, $3)
+            ON CONFLICT (user_id, goal_id) 
+            DO UPDATE SET recommend_value = EXCLUDED.recommend_value`;
+
         try{
-            const result = await db.query(`INSERT INTO hasManyGoals (user_id, goal_id) VALUES 
-                ($1, $2)`, 
-            [user_id, goal_id]);
+
+            result = await db.query(query, [user_id, goal_id, recommend_value]);
 
             return res.status(200).json({message : "goal updated"});
         }catch(err){

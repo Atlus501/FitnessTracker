@@ -28,7 +28,7 @@ create table IF NOT EXISTS Activities(
 --creates Exercises child table
 create table IF NOT EXISTS Exercises(
 	name varchar(30) PRIMARY KEY,
-	weight_modifier SMALLINT CHECK (weights >= 0),
+	weight_modifier SMALLINT CHECK (weight_modifier >= 0),
 	FOREIGN KEY(name) REFERENCES Activities(name) ON DELETE CASCADE
 );
 
@@ -45,7 +45,7 @@ create table IF NOT EXISTS HasManyGoals (
     user_id INT NOT NULL,
     goal_id INT NOT NULL,
     recommend_value INT,
-    FOREIGN KEY (user_id) REFERENCES "Users"(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE,
     FOREIGN KEY (goal_id) REFERENCES Goals(id) ON DELETE CASCADE,
     PRIMARY KEY (user_id, goal_id)
 );
@@ -56,8 +56,8 @@ create table IF NOT EXISTS DoesDailyActivity (
     date DATE NOT NULL,
     amount_done SMALLINT CHECK (amount_done >= 0) NOT NULL,
     activity varchar(30) NOT NULL,
-    PRIMARY KEY (user_id, date, activity_id),
-    FOREIGN KEY (user_id) REFERENCES "Users"(id) ON DELETE CASCADE,
+    PRIMARY KEY (user_id, date, activity),
+    FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE,
     FOREIGN KEY (activity) REFERENCES Activities(name)
 );
 
@@ -67,7 +67,7 @@ create table IF NOT EXISTS DailyProgressOfGoals (
     daily_progress NUMERIC(3,2) CHECK (daily_progress >= 0 AND daily_progress <= 1) NOT NULL,
     user_id INT NOT NULL,
     goal_id INT NOT NULL,
-    PRIMARY KEY (date, user_id, goal_composite_key),
-    FOREIGN KEY (user_id) REFERENCES "Users"(id) ON DELETE CASCADE,
+    PRIMARY KEY (date, user_id, goal_id),
+    FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id, goal_id) REFERENCES HasManyGoals(user_id, goal_id) ON DELETE CASCADE
 );
