@@ -42,8 +42,12 @@ const progressHelper = {
 
             const dailyActivities = await db.query(query, [user_id, today]);
 
-            if(dailyActivities.rowCount === 0)
-                return res.status(404).json({message : "you have zero activities for today"});
+            if(dailyActivities.rowCount === 0){
+                query = "UPDATE DailyProgressOfGoals SET daily_progress = 0 WHERE user_id=$1 AND date=$2";
+                await db.query(query, [user_id, today]);
+
+                return res.status(200).json({message : "you have zero activities for today"});
+            }
 
             const goalsDict = {};
 
