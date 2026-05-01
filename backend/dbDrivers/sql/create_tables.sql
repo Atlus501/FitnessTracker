@@ -25,13 +25,6 @@ create table IF NOT EXISTS Activities(
 	units VARCHAR(20) NOT NULL
 );
 
---creates Exercises child table
-create table IF NOT EXISTS Exercises(
-	name varchar(30) PRIMARY KEY,
-	weight_modifier SMALLINT CHECK (weight_modifier >= 0),
-	FOREIGN KEY(name) REFERENCES Activities(name) ON DELETE CASCADE
-);
-
 --create Foods child table
 create table IF NOT EXISTS Foods(
 	name varchar(30) PRIMARY KEY,

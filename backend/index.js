@@ -6,12 +6,14 @@ const sqlFileDriver = require('./dbDrivers/sqlDriver.js');
 
 const goalRouter = require('./routes/Goals.js');
 const activityRouter = require('./routes/Activities.js');
+const progressRouter = require('./routes/Progress.js');
 
 app.use(express.json());
 app.use(cors());
 
 app.use("/goals", goalRouter);
 app.use("/activities", activityRouter);
+app.use("/progress", progressRouter);
 
 //initialily create the tables once the app in initialized
 app.listen(3001, async () => {

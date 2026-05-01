@@ -1,4 +1,4 @@
-const db = require('./db');
+const db = require('../../dbDrivers/db');
 
 //calculates the calories needed
 const calCalorie = (data) => {
@@ -34,7 +34,7 @@ const GoalsHelper = {
         const { user_id } = req.params;
         try {
             const result = await db.query(
-                `SELECT * FROM hasManyGoals h JOIN Users u ON h.user_id = u.id
+                `SELECT * FROM hasManyGoals h
                 JOIN Goals g ON h.goal_id = g.id WHERE u.id = $1`
 
                 ,[user_id]

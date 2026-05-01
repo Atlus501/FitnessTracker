@@ -1,4 +1,5 @@
-const db = require('./db');
+const db = require('../../dbDrivers/db');
+const getDate = require('./Date.js');
 
 const ActivitiesHelper = {
     getActivityList : async (req, res) =>{
@@ -24,7 +25,12 @@ const ActivitiesHelper = {
     },
 
     getExerciseList : async (req, res) =>{
-        const query = "SELECT * FROM Exercises NATURAL JOIN Activities";
+        const query = `SELECT * FROM Activities a
+            WHERE NOT EXISTS (
+                SELECT 1 
+                FROM Foods f 
+                WHERE f.name = a.name
+            );`;
 
         try{
             const response = await db.query(query);
@@ -36,7 +42,7 @@ const ActivitiesHelper = {
 
     recordActivity : async (req, res) => {
         const {amount_done, activity, user_id} = req.body;
-        const today = new Date();
+        const today = getDate();
 
         const query = `INSERT INTO DoesDailyActivity (user_id, activity, amount_done, date)
             VALUES ($1, $2, $3, $4)
@@ -56,7 +62,7 @@ const ActivitiesHelper = {
 
     getDailyActivity : async (req, res) => {
         const {user_id} = req.params;
-        const today = new Date();
+        const today = getDate();
 
         const query = "SELECT * FROM DoesDailyActivity WHERE user_id = $1 AND DATE = $2";
 
@@ -71,7 +77,7 @@ const ActivitiesHelper = {
 
     removeDailyActivity : async (req, res) => {
         const {user_id} = req.query;
-        const today = new Date();
+        const today = getDate();
 
         const query = "DELETE FROM DoesDailyActivity WHERE user_id = $1 AND DATE = $2";
 
