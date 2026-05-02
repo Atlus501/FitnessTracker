@@ -17,20 +17,20 @@ CREATE TABLE IF NOT EXISTS Goals (
     type VARCHAR(25) UNIQUE-- type of goal (bulk/cut/cardio etc.)
 );
 
--- Optional exercise detail table from the Phase 1 design
-create table IF NOT EXISTS Exercises(
-	name varchar(30) PRIMARY KEY,
-	type varchar(30) NOT NULL,
-	weight SMALLINT CHECK(weight >= 0),
-	FOREIGN KEY (name) REFERENCES Activities(name) ON DELETE CASCADE
-);
-
 --create the parent Activities table
 create table IF NOT EXISTS Activities(
 	name VARCHAR(30) PRIMARY KEY,
 	caloric_gain int NOT NULL,
 	amount SMALLINT CHECK (amount >= 0) NOT NULL,
 	units VARCHAR(20) NOT NULL
+);
+
+-- Optional exercise detail table from the Phase 1 design
+create table IF NOT EXISTS Exercises(
+	name varchar(30) PRIMARY KEY,
+	type varchar(30) NOT NULL,
+	weight SMALLINT CHECK(weight >= 0),
+	FOREIGN KEY (name) REFERENCES Activities(name) ON DELETE CASCADE
 );
 
 --create Foods child table
