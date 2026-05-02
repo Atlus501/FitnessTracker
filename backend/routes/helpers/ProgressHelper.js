@@ -11,7 +11,7 @@ const progressHelper = {
             const result = await db.query(query, [user_id, today]);
 
             if(result.rowCount === 0)
-                return res.status(200).json([]);
+                return res.status(200).json({message : "you have zero activities for today"});
 
             return res.status(200).json(result.rows);
 
@@ -74,7 +74,6 @@ const progressHelper = {
 
             for(let goal of goals.rows){
                 goalsDict[goal.type] = goal.recommend_value > 0 ? (goalsDict[goal.type] / goal.recommend_value) : 0;
-                goalsDict[goal.type] = Math.max(0, Math.min(1, goalsDict[goal.type]));
 
                 query = `INSERT INTO DailyProgressOfGoals (user_id, goal_id, daily_progress, date)
                     VALUES ($1, $2, $3, $4)
