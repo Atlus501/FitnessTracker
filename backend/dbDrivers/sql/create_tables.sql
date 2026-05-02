@@ -3,7 +3,7 @@
 -- User table to keep track of users in the system
 CREATE TABLE IF NOT EXISTS Users (
     id SERIAL PRIMARY KEY, -- serial helps to auto-increment the id when not specified
-	name VARCHAR(255) NOT NULL, -- name of user
+	name VARCHAR(255) UNIQUE NOT NULL, -- name of user
     password VARCHAR(255) NOT NULL, -- password can't be null
     is_male BOOLEAN NOT NULL, -- gender can't be null
     age SMALLINT NOT NULL CHECK (age >= 0), -- ensuring that age is a +ve int
@@ -15,6 +15,14 @@ CREATE TABLE IF NOT EXISTS Users (
 CREATE TABLE IF NOT EXISTS Goals (
     id SERIAL PRIMARY KEY, -- using serial again
     type VARCHAR(25) UNIQUE-- type of goal (bulk/cut/cardio etc.)
+);
+
+-- Optional exercise detail table from the Phase 1 design
+create table IF NOT EXISTS Exercises(
+	name varchar(30) PRIMARY KEY,
+	type varchar(30) NOT NULL,
+	weight SMALLINT CHECK(weight >= 0),
+	FOREIGN KEY (name) REFERENCES Activities(name) ON DELETE CASCADE
 );
 
 --create the parent Activities table
