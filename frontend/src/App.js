@@ -1,6 +1,11 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState} from 'react';
 import axios from 'axios';
 import './App.css';
+
+import {AuthContext} from './helpers/AuthContext'
+import {BrowserRouter as Router, Route, Routes, Link} from 'react-router-dom'
+
+import ActivityPage from './pages/ActivityPage.js'
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
@@ -14,6 +19,12 @@ const emptyAccount = {
 };
 
 function App() {
+
+  const[authState, setAuthState] = useState({
+    username: "",
+    user_id: 0,
+  });
+
   const [mode, setMode] = useState('login');
   const [account, setAccount] = useState(emptyAccount);
   const [user, setUser] = useState(null);
@@ -147,6 +158,8 @@ function App() {
   };
 
   return (
+    <>
+    <AuthContext.Provider value = {{authState, setAuthState}}>
     <main className="app-shell">
       <section className="masthead">
         <div>
@@ -297,6 +310,12 @@ function App() {
         </section>
       )}
     </main>
+
+
+    <Routes>
+      <Route path="/activity" element={<ActivityPage/>}/>
+    </Routes>
+    </AuthContext.Provider></>
   );
 }
 

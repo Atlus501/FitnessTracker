@@ -3,7 +3,7 @@ const getDate = require('./Date.js');
 
 const ActivitiesHelper = {
     getActivityList : async (req, res) =>{
-        const query = "SELECT * FROM Activities ORDER BY name";
+        const query = "SELECT name FROM Activities";
 
         try{
             const response = await db.query(query);
@@ -25,10 +25,12 @@ const ActivitiesHelper = {
     },
 
     getExerciseList : async (req, res) =>{
-        const query = `SELECT a.*, e.type, e.weight
-            FROM Activities a
-            JOIN Exercises e ON e.name = a.name
-            ORDER BY a.name;`;
+        const query = `SELECT * FROM Activities a
+            WHERE NOT EXISTS (
+                SELECT 1 
+                FROM Foods f 
+                WHERE f.name = a.name
+            );`;
 
         try{
             const response = await db.query(query);
@@ -49,7 +51,7 @@ const ActivitiesHelper = {
 
         try{
 
-            await db.query(query, [user_id, activity, amount_done, today]);
+            const response = await db.query(query, [user_id, activity, amount_done, today]);
 
             return res.status(200).json({message: "successfully inserted daily activity"});
 
@@ -66,7 +68,7 @@ const ActivitiesHelper = {
 
         try{
             const response = await db.query(query, [user_id, today]);
-            return res.status(200).json(response.rows);
+            return res.status(200).json({status: "successfully inserted daily activity"});
 
         }catch(err){
             return res.status(500).json({error : err.message});
@@ -77,14 +79,11 @@ const ActivitiesHelper = {
         const {user_id, activity} = req.query;
         const today = getDate();
 
-        const query = activity
-            ? "DELETE FROM DoesDailyActivity WHERE user_id = $1 AND DATE = $2 AND activity = $3"
-            : "DELETE FROM DoesDailyActivity WHERE user_id = $1 AND DATE = $2";
+        const query = "DELETE FROM DoesDailyActivity WHERE user_id = $1 AND DATE = $2 AND activity = $3";
 
         try{
-            const params = activity ? [user_id, today, activity] : [user_id, today];
-            const response = await db.query(query, params);
-            return res.status(200).json({message: "daily activity removed", removed: response.rowCount});
+            const response = await db.query(query, [user_id, today, activity]);
+            return res.status(200).json({status: "successfully removed daily activity"});
 
         }catch(err){
             return res.status(500).json({error : err.message});
