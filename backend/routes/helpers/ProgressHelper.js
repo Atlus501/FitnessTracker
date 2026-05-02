@@ -36,7 +36,11 @@ const progressHelper = {
                         SELECT * FROM DoesDailyActivity 
                         WHERE user_id = $1 AND date = $2
                         )
-                        SELECT * FROM userActivity ua
+                        SELECT ua.amount_done, 
+                            a.amount,
+                            a.caloric_gain, 
+                            f.protein, 
+                            f.fiber FROM userActivity ua
                         JOIN Activities a ON a.name = ua.activity
                         LEFT JOIN Foods f ON f.name = a.name`;
 

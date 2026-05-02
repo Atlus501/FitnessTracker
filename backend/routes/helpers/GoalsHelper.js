@@ -48,7 +48,7 @@ const GoalsHelper = {
         try {
             const result = await db.query(
                 `SELECT * FROM hasManyGoals h
-                JOIN Goals g ON h.goal_id = g.id WHERE u.id = $1`
+                JOIN Goals g ON h.goal_id = g.id WHERE h.user_id = $1`
 
                 ,[user_id]
             );

@@ -65,7 +65,7 @@ function ActivityPage(){
                     {
                         activities.map((data) => {
                             const activity = data.activity;
-                            return <option key={activity} value={activity}>{activity}</option>
+                            return <option key={activity} value={activity}>{activity +" ("+data.units+")"}</option>
                         })
                     }
                 </Field>

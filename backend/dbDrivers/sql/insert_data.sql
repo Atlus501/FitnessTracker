@@ -20,9 +20,3 @@ INSERT INTO Foods (name, protein, fiber) VALUES
     ('Oatmeal', 6, 4),
     ('Black Beans', 15, 15)
 ON CONFLICT (name) DO NOTHING;
-
-INSERT INTO Exercises (name, type, weight) VALUES
-    ('Running', 'cardio', 0),
-    ('Cycling', 'cardio', 0),
-    ('Weight Lifting', 'strength', 50)
-ON CONFLICT (name) DO NOTHING;

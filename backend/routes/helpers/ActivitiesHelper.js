@@ -3,7 +3,7 @@ const getDate = require('./Date.js');
 
 const ActivitiesHelper = {
     getActivityList : async (req, res) =>{
-        const query = "SELECT name FROM Activities";
+        const query = "SELECT name, units FROM Activities";
 
         try{
             const response = await db.query(query);
@@ -64,7 +64,7 @@ const ActivitiesHelper = {
         const {user_id} = req.params;
         const today = getDate();
 
-        const query = "SELECT * FROM DoesDailyActivity WHERE user_id = $1 AND DATE = $2";
+        const query = "SELECT * FROM DoesDailyActivity WHERE user_id = $1 AND date = $2";
 
         try{
             const response = await db.query(query, [user_id, today]);
@@ -79,7 +79,7 @@ const ActivitiesHelper = {
         const {user_id, activity} = req.query;
         const today = getDate();
 
-        const query = "DELETE FROM DoesDailyActivity WHERE user_id = $1 AND DATE = $2 AND activity = $3";
+        const query = "DELETE FROM DoesDailyActivity d WHERE user_id = $1 AND d.date = $2 AND activity = $3";
 
         try{
             const response = await db.query(query, [user_id, today, activity]);
