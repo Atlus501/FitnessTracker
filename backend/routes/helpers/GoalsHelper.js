@@ -30,12 +30,25 @@ const calRecommend = async(data) => {
 };
 
 const GoalsHelper = {
+    getGoalTypes: async (req, res) => {
+        try {
+            const result = await db.query('SELECT * FROM Goals ORDER BY id');
+            return res.status(200).json(result.rows);
+        } catch (err) {
+            return res.status(500).json({ error: err.message });
+        }
+    },
+
     getGoals : async (req, res) => {
         const { user_id } = req.params;
         try {
             const result = await db.query(
-                `SELECT * FROM hasManyGoals h
-                JOIN Goals g ON h.goal_id = g.id WHERE u.id = $1`
+                `SELECT h.user_id, h.goal_id, h.recommend_value, g.type, u.is_male, u.age, u.weight, u.height
+                 FROM HasManyGoals h
+                 JOIN Goals g ON h.goal_id = g.id
+                 JOIN Users u ON h.user_id = u.id
+                 WHERE h.user_id = $1
+                 ORDER BY g.type`
 
                 ,[user_id]
             );
@@ -66,19 +79,29 @@ const GoalsHelper = {
 
     recordGoals : async (req, res) => {
         const {user_id, goal_id} = req.body;
-
-        const recommend_value = await calRecommend(row);
-
-        const query = `INSERT INTO hasManyGoals (user_id, goal_id, recommend_value) VALUES 
-                ($1, $2, $3)
-            ON CONFLICT (user_id, goal_id) 
-            DO UPDATE SET recommend_value = EXCLUDED.recommend_value`;
+        const query = `SELECT u.id AS user_id, u.is_male, u.age, u.weight, u.height, g.id AS goal_id, g.type
+            FROM Users u
+            CROSS JOIN Goals g
+            WHERE u.id = $1 AND g.id = $2`;
 
         try{
+            const data = await db.query(query, [user_id, goal_id]);
 
-            result = await db.query(query, [user_id, goal_id, recommend_value]);
+            if(data.rowCount === 0)
+                return res.status(404).json({error : "user or goal not found"});
 
-            return res.status(200).json({message : "goal updated"});
+            const recommend_value = await calRecommend(data.rows[0]);
+
+            const result = await db.query(
+                `INSERT INTO HasManyGoals (user_id, goal_id, recommend_value)
+                 VALUES ($1, $2, $3)
+                 ON CONFLICT (user_id, goal_id)
+                 DO UPDATE SET recommend_value = EXCLUDED.recommend_value
+                 RETURNING user_id, goal_id, recommend_value`,
+                [user_id, goal_id, recommend_value]
+            );
+
+            return res.status(200).json({message : "goal updated", goal: result.rows[0]});
         }catch(err){
             return res.status(400).json({ error: err.message });
         }
