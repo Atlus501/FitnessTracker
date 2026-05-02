@@ -3,7 +3,7 @@
 -- User table to keep track of users in the system
 CREATE TABLE IF NOT EXISTS Users (
     id SERIAL PRIMARY KEY, -- serial helps to auto-increment the id when not specified
-	name VARCHAR(255) NOT NULL, -- name of user
+	name UNIQUE VARCHAR(255) NOT NULL, -- name of user
     password VARCHAR(255) NOT NULL, -- password can't be null
     is_male BOOLEAN NOT NULL, -- gender can't be null
     age SMALLINT NOT NULL CHECK (age >= 0), -- ensuring that age is a +ve int

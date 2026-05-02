@@ -45,9 +45,9 @@ const GoalsHelper = {
                     row.recommend_value = await calRecommend(row);
             }
 
-            return res.json(result.rows);
+            return res.status(200).json(result.rows);
         } catch (err) {
-            return res.status(500).json({ error: err.message });
+            return res.status(400).json({ error: err.message });
         }
     },
 
@@ -60,7 +60,7 @@ const GoalsHelper = {
 
             return res.status(200).json({message : "goal updated"});
         }catch(err){
-            return res.status(500).json({ error: err.message });
+            return res.status(400).json({ error: err.message });
         }
     },
 
@@ -80,7 +80,7 @@ const GoalsHelper = {
 
             return res.status(200).json({message : "goal updated"});
         }catch(err){
-            return res.status(500).json({ error: err.message });
+            return res.status(400).json({ error: err.message });
         }
     }
 }
