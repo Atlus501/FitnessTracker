@@ -52,7 +52,9 @@ const [mode, setMode] = useState('login');
 
           navigate('/goals');
         }
-      })    
+      }).catch((error)=>{
+        setError(error.error);
+      });    
     } catch (err) {
       setError(err.response?.data?.error || 'Account request failed.');
     }

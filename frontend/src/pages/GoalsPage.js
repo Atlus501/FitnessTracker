@@ -39,7 +39,7 @@ function GoalsPage(){
         axios.get(`${API_URL}/goals`).then((res) => {
             setGoalTypes(res.data);
             if (res.data[0]) setSelectedGoal(String(res.data[0].id));
-        }).catch(() => {})
+        }).catch((error) => {setError(error.message)})
 
     }, [API_URL, authState.user_id]);
 
@@ -51,12 +51,15 @@ function GoalsPage(){
       await axios.post(`${API_URL}/goals/record_goal`, {
         user_id: authState.user_id,
         goal_id: Number(selectedGoal),
+      }).then(() => {
+          axios.post("http://localhost:3001/progress/updateProgress", { user_id: authState.user_id }).then(()=>{
+            axios.get(`${API_URL}/progress/${authState.user_id}`);
+          });
       });
       await loadUserData(authState.user_id);
       setNotice('Goal saved with a personalized recommendation.');
     } catch (err) {
       setError(err.response?.data?.error || 'Could not save goal.');
-      console.log(err);
     }
   };
 
@@ -96,7 +99,9 @@ const loadUserData = async (userId) => {
   const getUser = () => {
     axios.get(`${API_URL}/users/${authState.user_id}`).then((response) => {
         setUser(response.data);
-    });;
+    }).catch((err)=>{
+      setError(err.error);
+    });
   }
 
   const seeActivityLog = () => {
