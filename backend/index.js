@@ -7,10 +7,12 @@ const sqlFileDriver = require('./dbDrivers/sqlDriver.js');
 const goalRouter = require('./routes/Goals.js');
 const activityRouter = require('./routes/Activities.js');
 const progressRouter = require('./routes/Progress.js');
+const userRouter = require('./routes/Users.js');
 
 app.use(express.json());
 app.use(cors());
 
+app.use("/users", userRouter);
 app.use("/goals", goalRouter);
 app.use("/activities", activityRouter);
 app.use("/progress", progressRouter);

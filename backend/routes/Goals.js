@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 
-const sqlFileDriver = require('../dbDrivers/sqlDriver.js');
-
 const helper = require('./helpers/GoalsHelper.js');
+
+//gets every available goal type
+router.get("/", helper.getGoalTypes);
 
 //adds or updates goals for the user 
 router.post("/record_goal", helper.recordGoals);
