@@ -21,13 +21,13 @@ const progressHelper = {
         const {user_id} = req.body;
         const today = getDate();
 
-        var query = `SELECT * FROM HasManyGoals h JOIN Goals g ON h.goal_id = g.id WHERE user_id=$1`;
+        var query = `SELECT * FROM HasManyGoals h JOIN Goals g ON h.goal_id = g.id WHERE h.user_id=$1`;
 
         try{
             const goals = await db.query(query, [user_id]);
 
             if(goals.rowCount === 0)
-                return res.status(200).json({message : "you have no goals"});
+                return res.status(200).json([]);
 
             query = `WITH userActivity AS (
                         SELECT * FROM DoesDailyActivity 
@@ -38,22 +38,22 @@ const progressHelper = {
                             a.caloric_gain, 
                             f.protein, 
                             f.fiber FROM userActivity ua
-                        JOIN Activities a ON a.name = ua.activity
+                        JOIN Activities a ON ua.activity = a.name
                         LEFT JOIN Foods f ON f.name = a.name`;
 
             const dailyActivities = await db.query(query, [user_id, today]);
 
             if(dailyActivities.rowCount === 0){
-                query = "UPDATE DailyProgressOfGoals SET daily_progress = 0 WHERE user_id=$1 AND date=$2";
+                query = "UPDATE DailyProgressOfGoals SET daily_progress = 0.0 WHERE user_id=$1 AND date=$2";
                 await db.query(query, [user_id, today]);
 
-                return res.status(200).json({message : "you have zero activities for today"});
+                return res.status(200).json([]);
             }
 
             const goalsDict = {};
 
             for(let goal of goals.rows){
-                goalsDict[goal.type] = 0;
+                goalsDict[goal.type] = 0.0;
             }
 
             for (let activity of dailyActivities.rows){
@@ -75,6 +75,7 @@ const progressHelper = {
 
             for(let goal of goals.rows){
                 goalsDict[goal.type] = goal.recommend_value > 0 ? (goalsDict[goal.type] / goal.recommend_value) : 0;
+                goalsDict[goal.type] = goalsDict[goal.type] > 1 ? 1 : goalsDict[goal.type];
 
                 query = `INSERT INTO DailyProgressOfGoals (user_id, goal_id, daily_progress, date)
                     VALUES ($1, $2, $3, $4)
@@ -87,6 +88,7 @@ const progressHelper = {
             return res.status(200).json({message : "progress successfully updated"});
 
         }catch(err){
+            console.log(err.message);
             return res.status(400).json({error : err.message});
         }
 
