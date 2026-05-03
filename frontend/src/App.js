@@ -8,9 +8,10 @@ import GoalsPage from './pages/GoalsPage.js'
 
 function App() {
 
-  const[authState, setAuthState] = useState({
-    username: "",
-    user_id: 0,
+  const[authState, setAuthState] = useState(() => {
+    const token = localStorage.getItem("fitness-user");
+  // If token exists, parse it; otherwise, use the default object
+    return token ? JSON.parse(token) : { username: "", user_id: 0 };
   });
 
   return (

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext} from 'react';
+import React, { useState, useContext} from 'react';
 import axios from 'axios';
 import '../App.css';
 
@@ -25,7 +25,6 @@ const emptyAccount = {
 
 const [mode, setMode] = useState('login');
   const [account, setAccount] = useState(emptyAccount);
-  const [user, setUser] = useState(null);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
 
@@ -49,11 +48,11 @@ const [mode, setMode] = useState('login');
 
         if(mode==='login'){
           setAuthState({user_id: response.data.id, username: response.data.name});
-          console.log(response.data.name);
+          localStorage.setItem("fitness-user", JSON.stringify({user_id: response.data.id, username: response.data.name}));
 
           navigate('/goals');
         }
-      });      
+      })    
     } catch (err) {
       setError(err.response?.data?.error || 'Account request failed.');
     }

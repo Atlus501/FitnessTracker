@@ -20,19 +20,30 @@ function GoalsPage(){
     const [goalTypes, setGoalTypes] = useState([]);
     const [goals, setGoals] = useState([]);
 
-    const [activities, setActivities] = useState([]);
-    const [dailyActivities, setDailyActivities] = useState([]);
     const [error, setError] = useState('');
 
     const [progress, setProgress] = useState([]);
     const [selectedGoal, setSelectedGoal] = useState('');
-    const [activityForm, setActivityForm] = useState({ activity: '', amount_done: 1 });
 
     const [notice, setNotice] = useState('');
 
     const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
-      const addGoal = async () => {
+    useEffect(() => {
+
+        if (!authState.user_id) navigate("/");
+
+        getUser();
+        loadUserData(authState.user_id);
+
+        axios.get(`${API_URL}/goals`).then((res) => {
+            setGoalTypes(res.data);
+            if (res.data[0]) setSelectedGoal(String(res.data[0].id));
+        }).catch(() => {})
+
+    }, [API_URL, authState.user_id]);
+
+    const addGoal = async () => {
     if (!authState.user_id || !selectedGoal) return;
     clearMessages();
 
@@ -63,26 +74,24 @@ function GoalsPage(){
     }
   };
 
-   const progressByGoal = useMemo(() => {
-      const map = {};
-      progress.forEach((item) => {
-        map[item.goal_id] = Number(item.daily_progress);
-      });
-      return map;
-    }, [progress]);
+const progressByGoal = useMemo(() => {
+  const map = {};
+  progress.forEach((item) => {
+    map[item.goal_id] = Number(item.daily_progress);
+  });
+  return map;
+}, [progress]);
 
 
-     const loadUserData = async (userId) => {
-    const [goalsResponse, dailyResponse, progressResponse] = await Promise.all([
+const loadUserData = async (userId) => {
+    const [goalsResponse, progressResponse] = await Promise.all([
       axios.get(`${API_URL}/goals/${userId}`),
-      axios.get(`${API_URL}/activities/${userId}`),
       axios.get(`${API_URL}/progress/${userId}`),
     ]);
 
     setGoals(goalsResponse.data);
-    setDailyActivities(dailyResponse.data);
     setProgress(progressResponse.data);
-  };
+};
 
   const getUser = () => {
     axios.get(`${API_URL}/users/${authState.user_id}`).then((response) => {
@@ -90,61 +99,13 @@ function GoalsPage(){
     });;
   }
 
-  useEffect(() => {
-    if (!authState.user_id) return;
-    getUser();
-    loadUserData(authState.user_id);
-
-    axios.get(`${API_URL}/activities`).then((res) => {
-      setActivities(res.data);
-      if (res.data[0]) setActivityForm((form) => ({ ...form, activity: res.data[0].name }));
-    }).catch(() => {});
-
-    axios.get(`${API_URL}/goals`).then((res) => {
-      setGoalTypes(res.data);
-      if (res.data[0]) setSelectedGoal(String(res.data[0].id));
-    }).catch(() => {})
-  }, [API_URL, authState.user_id]);
-
-  const saveActivity = async (event) => {
-    event.preventDefault();
-    clearMessages();
-
-    try {
-      await axios.post(`${API_URL}/activities/record`, {
-        user_id: authState.user_id,
-        activity: activityForm.activity,
-        amount_done: Number(activityForm.amount_done),
-      });
-      await axios.post(`${API_URL}/progress/updateProgress`, { user_id: authState.user_id });
-      await loadUserData(authState.user_id);
-      setNotice('Activity saved and progress recalculated.');
-    } catch (err) {
-      setError(err.response?.data?.error || 'Could not save activity.');
-    }
-  };
-
-  const removeActivity = async (activity) => {
-    clearMessages();
-
-    try {
-      await axios.delete(`${API_URL}/activities/remove`, {
-        params: { user_id: authState.user_id, activity },
-      });
-      await axios.post(`${API_URL}/progress/updateProgress`, { user_id: authState.user_id });
-      await loadUserData(authState.user_id);
-      setNotice('Activity deleted and progress recalculated.');
-    } catch (err) {
-      setError(err.response?.data?.error || 'Could not delete activity.');
-    }
-  };
-
   const seeActivityLog = () => {
     navigate('/activity');
   };
 
   const signOut = () => {
     setAuthState({user_id: 0, username: ""});
+    localStorage.removeItem("fitness-user");
     navigate('/');
   };
 
@@ -155,6 +116,10 @@ function GoalsPage(){
             <p>{user.age} years old · {user.weight} lb · {user.height} cm</p>
             <button className="secondary-button" onClick={() => loadUserData(authState.user_id)}>Refresh Data</button>
             <button className="primary-button" onClick={() => {signOut()}}>Sign out</button>
+
+            <span>{notice}</span>
+            <span>{error}</span>
+            
           </aside>
 
           <section className="work-area">

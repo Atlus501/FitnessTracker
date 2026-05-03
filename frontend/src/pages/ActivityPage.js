@@ -26,7 +26,7 @@ function ActivityPage(){
 
     const initialValues = {
         activity: (activities[0]?.name )|| "",
-        amount_done: 0,
+        amount_done: 1,
     };
 
     const loadUserActivities = () =>{
@@ -42,16 +42,17 @@ function ActivityPage(){
         const payload = {...data, user_id: authState.user_id}
 
         axios.post("http://localhost:3001/activities/record", payload).then(()=>{
-            axios.post("http://localhost:3001/progress/updateProgress", { user_id: authState.user_id });
-            loadUserActivities();
-            resetForm();
-            setError();
+             axios.post("http://localhost:3001/progress/updateProgress", { user_id: authState.user_id }).then(() => {
+                loadUserActivities();
+                resetForm();
+                setError();
+             });
         }).catch(err => handleError(err));
     };
 
     const validationSchema = Yup.object().shape({
         activity: Yup.string().oneOf(activities.map(a => a.name), "please select one of the options").required("Required"),
-        amount_done: Yup.number().integer().min(0).required("Required"),
+        amount_done: Yup.number().integer().min(1, "please pick an amount greater than 0").required("Required"),
     });
 
     const removeActivity = (data) => {
@@ -64,6 +65,8 @@ function ActivityPage(){
     }
 
     useEffect(() => {
+        if (!authState.user_id) navigate("/");
+
         axios.get("http://localhost:3001/activities").then((response)=>{
             setActivities(response.data);
             setError();
@@ -72,9 +75,10 @@ function ActivityPage(){
     }, [authState.user_id]);
 
     return <>
-    <div classname="container">
+    <div className="container">
         <button className="primary-button" onClick={()=>{
             setAuthState({user_id: 0, username: ""});
+            localStorage.removeItem("fitness-user");
             navigate("/");
         }}>Sign out</button>
 
