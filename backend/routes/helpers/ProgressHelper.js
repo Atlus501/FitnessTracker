@@ -10,9 +10,6 @@ const progressHelper = {
         try{
             const result = await db.query(query, [user_id, today]);
 
-            if(result.rowCount === 0)
-                return res.status(200).json({message : "you have zero activities for today"});
-
             return res.status(200).json(result.rows);
 
         }catch(err){

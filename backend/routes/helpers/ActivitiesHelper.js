@@ -68,7 +68,7 @@ const ActivitiesHelper = {
 
         try{
             const response = await db.query(query, [user_id, today]);
-            return res.status(200).json({status: "successfully inserted daily activity"});
+            return res.status(200).json(response.rows);
 
         }catch(err){
             return res.status(500).json({error : err.message});

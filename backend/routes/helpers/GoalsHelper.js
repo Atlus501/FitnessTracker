@@ -18,13 +18,11 @@ const calFiber = (data) => data.is_male ? 38 : 25;
 const calRecommend = async(data) => {
     var value = null;
 
-    if (data.type === "calorie") value = calCalorie(data);
-    else if (data.type === "protein") value = calProtein(data);
-    else if (data.type === "fiber") value = calFiber(data);
+    const response = await db.query("SELECT * FROM Users WHERE id = $1", [data.user_id]);
 
-    if (value !== null)
-        await db.query("UPDATE hasManyGoals SET recommend_value=$1 WHERE user_id=$2 AND goal_id=$3", 
-            [value, data.user_id, data.goal_id]);
+    if (data.type === "calorie") value = calCalorie(response);
+    else if (data.type === "protein") value = calProtein(response);
+    else if (data.type === "fiber") value = calFiber(response);
 
     return value;
 };
@@ -35,7 +33,7 @@ const GoalsHelper = {
 
         try{
             const response = await db.query(query);
-            return res.status(200).json({response});
+            return res.status(200).json(response.rows);
 
         }catch(err){
             return res.status(400).json({error: err.message});
@@ -80,13 +78,12 @@ const GoalsHelper = {
     recordGoals : async (req, res) => {
         const {user_id, goal_id} = req.body;
 
-        const recommend_value = await calRecommend(row);
+        const recommend_value = await calRecommend({user_id: user_id, goal_id: goal_id});
 
         const query = `INSERT INTO hasManyGoals (user_id, goal_id, recommend_value) VALUES 
                 ($1, $2, $3)
             ON CONFLICT (user_id, goal_id) 
             DO UPDATE SET recommend_value = EXCLUDED.recommend_value`;
-
         try{
 
             result = await db.query(query, [user_id, goal_id, recommend_value]);
