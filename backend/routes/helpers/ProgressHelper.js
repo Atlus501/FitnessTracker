@@ -59,6 +59,11 @@ const progressHelper = {
             for (let activity of dailyActivities.rows){
                 let modifer = activity.amount_done / activity.amount;
 
+                if("calories_burned" in goalsDict && (activity.caloric_gain < 0) ){
+                    goalsDict.calories_burned += Math.abs(activity.caloric_gain * modifer);
+                    continue;
+                }
+
                 if("calorie" in goalsDict)
                     goalsDict.calorie += activity.caloric_gain * modifer;
 
@@ -76,6 +81,7 @@ const progressHelper = {
             for(let goal of goals.rows){
                 goalsDict[goal.type] = goal.recommend_value > 0 ? (goalsDict[goal.type] / goal.recommend_value) : 0;
                 goalsDict[goal.type] = goalsDict[goal.type] > 1 ? 1 : goalsDict[goal.type];
+                goalsDict[goal.type] = goalsDict[goal.type] < 0 ? 0 : goalsDict[goal.type];
 
                 query = `INSERT INTO DailyProgressOfGoals (user_id, goal_id, daily_progress, date)
                     VALUES ($1, $2, $3, $4)
@@ -83,6 +89,8 @@ const progressHelper = {
                     DO UPDATE SET daily_progress = EXCLUDED.daily_progress`;
 
                 await db.query(query, [user_id, goal.id, goalsDict[goal.type], today]);
+
+                console.log(goal.id + " " + goalsDict[goal.type]);
             }
 
             return res.status(200).json({message : "progress successfully updated"});

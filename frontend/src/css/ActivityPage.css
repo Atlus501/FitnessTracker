@@ -43,6 +43,11 @@ span {
     border-radius: 5%;
 }
 
+.delete:hover{
+    background-color: gold;
+    transform: scale(1.05);
+}
+
 .submit {
     margin: 15px;
     text-align: center;

@@ -1,6 +1,7 @@
 INSERT INTO Goals (type) VALUES
     ('calorie'),
     ('protein'),
+    ('calories_burned'),
     ('fiber')
 ON CONFLICT (type) DO NOTHING;
 

@@ -25,6 +25,7 @@ const calRecommend = async(data) => {
     if (data.type === "calorie") value = calCalorie(user);
     else if (data.type === "protein") value = calProtein(user);
     else if (data.type === "fiber") value = calFiber(user);
+    else value = 1000;
 
     return value;
 };
