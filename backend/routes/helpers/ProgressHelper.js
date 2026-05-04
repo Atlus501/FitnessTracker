@@ -89,14 +89,11 @@ const progressHelper = {
                     DO UPDATE SET daily_progress = EXCLUDED.daily_progress`;
 
                 await db.query(query, [user_id, goal.id, goalsDict[goal.type], today]);
-
-                console.log(goal.id + " " + goalsDict[goal.type]);
             }
 
             return res.status(200).json({message : "progress successfully updated"});
 
         }catch(err){
-            console.log(err.message);
             return res.status(400).json({error : err.message});
         }
 
