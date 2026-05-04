@@ -21,7 +21,7 @@ const progressHelper = {
         const {user_id} = req.body;
         const today = getDate();
 
-        var query = `SELECT * FROM HasManyGoals h JOIN Goals g ON h.goal_id = g.id WHERE h.user_id=$1`;
+        var query = `SELECT * FROM HasManyGoals h JOIN Goals g ON h.goal_id = g.id WHERE user_id=$1`;
 
         try{
             const goals = await db.query(query, [user_id]);
