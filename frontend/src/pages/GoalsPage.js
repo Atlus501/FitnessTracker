@@ -53,10 +53,11 @@ function GoalsPage(){
         goal_id: Number(selectedGoal),
       }).then(() => {
           axios.post("http://localhost:3001/progress/updateProgress", { user_id: authState.user_id }).then(()=>{
-            axios.get(`${API_URL}/progress/${authState.user_id}`);
+            axios.get(`${API_URL}/progress/${authState.user_id}`).then(async()=>{
+               await loadUserData(authState.user_id);
+            });
           });
       });
-      await loadUserData(authState.user_id);
       setNotice('Goal saved with a personalized recommendation.');
     } catch (err) {
       setError(err.response?.data?.error || 'Could not save goal.');
