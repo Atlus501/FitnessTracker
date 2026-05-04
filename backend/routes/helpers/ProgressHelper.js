@@ -59,11 +59,6 @@ const progressHelper = {
             for (let activity of dailyActivities.rows){
                 let modifer = activity.amount_done / activity.amount;
 
-                if("calories_burned" in goalsDict && (activity.caloric_gain < 0) ){
-                    goalsDict.calories_burned += Math.abs(activity.caloric_gain * modifer);
-                    continue;
-                }
-
                 if("calorie" in goalsDict)
                     goalsDict.calorie += activity.caloric_gain * modifer;
 
