@@ -121,10 +121,6 @@ const loadUserData = async (userId) => {
             <p>{user.age} years old · {user.weight} lb · {user.height} cm</p>
             <button className="secondary-button" onClick={() => loadUserData(authState.user_id)}>Refresh Data</button>
             <button className="primary-button" onClick={() => {signOut()}}>Sign out</button>
-
-            <span>{notice}</span>
-            <span>{error}</span>
-            
           </aside>
 
           <section className="work-area">
